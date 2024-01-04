@@ -30,7 +30,7 @@
 		},
 		{
 			"Name": "AsepriteImporter",
-			"Enabled": true,
+			"Enabled": false,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/eab6d3a9c9d14e43a69f58e3f1a6ace4"
 		},
 		{
