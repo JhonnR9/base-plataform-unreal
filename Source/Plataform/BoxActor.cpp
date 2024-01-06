@@ -46,5 +46,12 @@ void ABoxActor::NotifyHit(UPrimitiveComponent* MyComp,
 void ABoxActor::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	UE_LOG(LogTemp, Log, TEXT("Sobreposiçao Iniciada com %s!"), *OtherActor->GetName());
+	SetActorRelativeScale3D(FVector(1.5f, 1.5f, 1.5f));
+}
+
+void ABoxActor::NotifyActorEndOverlap(AActor* OtherActor)
+{
+	UE_LOG(LogTemp, Log, TEXT("Sobreposiçao Finalizada com %s!"), *OtherActor->GetName());
+	SetActorRelativeScale3D(FVector(1.0f, 1.0f, 1.0f));
 }
 
