@@ -44,7 +44,7 @@ class PLATAFORM_API APlayerPaperCharacter : public APaperCharacter
 	void UpdateAnimations();
 	void Flip(UPaperFlipbookComponent* FlipbookComponent);
 
-	// Menbers
+	// Members
 	EAnimationType CurrentAnimation;
 
 protected:

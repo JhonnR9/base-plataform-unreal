@@ -70,8 +70,8 @@ void APlayerPaperCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 		EnhancedInputComponent->BindAction(*MoveAction, ETriggerEvent::Triggered, this, &APlayerPaperCharacter::Move);
 
 		//Attack
-		if (AttackAction) { 
-			UE_LOG(LogTemp, Error, TEXT("The input AttACKAction not found"));
+		if (!AttackAction) { 
+			UE_LOG(LogTemp, Error, TEXT("The input AttackAction not found"));
 			return;
 		}
 		EnhancedInputComponent->BindAction(*AttackAction, ETriggerEvent::Triggered, this,
@@ -96,13 +96,15 @@ void APlayerPaperCharacter::Tick(float DeltaSeconds) {
 
 void APlayerPaperCharacter::UpdateAnimations()
 {
+	//Get defualt CharacterMovemen of APaperCharacter class
 	if (const UCharacterMovementComponent* MovementComponent = GetCharacterMovement()) {
-
+		//Get defualt PaperFlipbookComponent  of APaperCharacter class
 		if (UPaperFlipbookComponent* FlipbookComponent = GetSprite())
 		{
+			// stores the last recorded speed and the maximum speed to be considered as stopping
 			const float LastVelocityX = MovementComponent->GetLastUpdateVelocity().X;
 			float MinMoveVelocity = 0.08f;
-
+			// Convert the speed to a positive vector and compare it to the minimum speed to know if you are standing still or walking
 			if (FMath::Abs(LastVelocityX) > MinMoveVelocity) {
 				CurrentAnimation = EAnimationType::WALK;
 			}
@@ -110,12 +112,16 @@ void APlayerPaperCharacter::UpdateAnimations()
 				CurrentAnimation = EAnimationType::IDLE;
 			}
 
-			if (UPaperFlipbook* UpdatedFlipbook = *AnimationsMap.Find((CurrentAnimation))) {
+			// Check if there is a Flipbook associated with the current animation in the animations map
+			if (UPaperFlipbook* UpdatedFlipbook = *AnimationsMap.Find(CurrentAnimation)) {
+				// Compare the current Flipbook of the component with the updated Flipbook
 				if (FlipbookComponent->GetFlipbook() != UpdatedFlipbook) {
+					// If the Flipbooks are different, set the updated Flipbook in the component
 					FlipbookComponent->SetFlipbook(UpdatedFlipbook);
 				}
 			}
 
+			// Perform the "flip" action on the Flipbook component
 			Flip(FlipbookComponent);
 
 		}
@@ -125,19 +131,29 @@ void APlayerPaperCharacter::UpdateAnimations()
 
 void APlayerPaperCharacter::Flip(UPaperFlipbookComponent* FlipbookComponent)
 {
+	// //Get defualt CharacterMovemen of APaperCharacter class
 	if (const UCharacterMovementComponent* MovementComponent = GetCharacterMovement())
 	{
+		// stores the last recorded speed
 		FVector LastUpdateVelocity = MovementComponent->GetLastUpdateVelocity();
-		if (LastUpdateVelocity.X == 0) return;
 
+		// If the character is not moving horizontally, return without flipping
+		if (LastUpdateVelocity.X == 0)
+		{
+			return;
+		}
+
+		// Determine if the character should be flipped based on the direction of movement
 		bool bIsFlip = LastUpdateVelocity.X > 0;
+
+		// Set the new rotation for the Flipbook component based on the flip condition
 		FRotator NewRotation = bIsFlip ? FRotator(0.f, 0.f, 0.f) : FRotator(0.f, 180.f, 0.f);
 
+		// Apply the new rotation to the Flipbook component
 		FlipbookComponent->SetRelativeRotation(NewRotation);
-	
 	}
-	
 }
+
 
 void APlayerPaperCharacter::Attack(const FInputActionValue& Value) {
 	//not implemented yet
